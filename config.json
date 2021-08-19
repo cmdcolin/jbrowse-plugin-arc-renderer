@@ -4,12 +4,8 @@
   },
   "plugins": [
     {
-      "name": "UCSC",
-      "url": "http://localhost:9001/dist/jbrowse-plugin-ucsc.umd.development.js"
-    },
-    {
       "name": "ArcRenderer",
-      "url": "http://localhost:9000/dist/jbrowse-plugin-arc-renderer.umd.development.js"
+      "url": "http://localhost:9000/dist/jbrowsepluginarcrenderer.umd.development.js"
     }
   ],
   "assemblies": [
@@ -48,8 +44,8 @@
   "tracks": [
     {
       "type": "BasicTrack",
-      "trackId": "genehancer_ucsc",
-      "name": "UCSC GeneHancer",
+      "trackId": "dbsuper",
+      "name": "dbSUPER",
       "assemblyNames": ["hg38"],
       "adapter": {
         "type": "BedTabixAdapter",
@@ -147,7 +143,7 @@
             },
             {
               "type": "BasicTrack",
-              "configuration": "genehancer_ucsc",
+              "configuration": "dbsuper",
               "height": 100
             }
           ],

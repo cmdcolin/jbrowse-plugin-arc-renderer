@@ -38,12 +38,12 @@
     "@material-ui/icons": "^4.11.2"
   },
   "peerDependencies": {
-    "@jbrowse/core": "^1.3.3"
+    "@jbrowse/core": "link:///home/cdiesh/src/jbrowse-components/packages/core/dist"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.10.4",
     "@jbrowse/cli": "^1.0.4",
-    "@jbrowse/core": "^1.3.3",
+    "@jbrowse/core": "link:///home/cdiesh/src/jbrowse-components/packages/core/dist",
     "@jbrowse/development-tools": "^1.0.3",
     "@material-ui/core": "^4.9.13",
     "@material-ui/lab": "^4.0.0-alpha.45",

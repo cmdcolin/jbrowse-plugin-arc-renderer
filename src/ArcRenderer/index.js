@@ -8,10 +8,8 @@ import {
 import { PrerenderedCanvas } from '@jbrowse/core/ui'
 import { bpSpanPx } from '@jbrowse/core/util'
 import { createCanvas, createImageBitmap } from '@jbrowse/core/util'
-import { renderToAbstractCanvas } from '@jbrowse/core/util/offscreenCanvasUtils'
+import { renderToAbstractCanvas } from '@jbrowse/core/util'
 
-console.log({ createCanvas, createImageBitmap })
-// Our config schema for arc track will be basic, include just a color
 export const configSchema = ConfigurationSchema(
   'ArcRenderer',
   {
@@ -37,7 +35,9 @@ export const ReactComponent = props => {
 // Our ArcRenderer class does the main work in it's render method
 // which draws to a canvas and returns the results in a React component
 export default class ArcRenderer extends FeatureRendererType {
-  makeImageData() {
+  makeImageData(ctx, args) {
+    const { bpPerPx, regions, features, config } = args
+    const [region] = regions
     for (const feature of features.values()) {
       const [left, right] = bpSpanPx(
         feature.get('start'),
@@ -61,11 +61,9 @@ export default class ArcRenderer extends FeatureRendererType {
     const width = (region.end - region.start) / bpPerPx
     const height = 500
     const res = await renderToAbstractCanvas(width, height, renderProps, ctx =>
-      this.makeImageData(ctx, layoutRecords, {
+      this.makeImageData(ctx, {
         ...renderProps,
-        layout,
         features,
-        regionSequence,
       }),
     )
 
@@ -73,7 +71,6 @@ export default class ArcRenderer extends FeatureRendererType {
       ...renderProps,
       ...res,
       features,
-      layout,
       height,
       width,
     })
@@ -82,10 +79,8 @@ export default class ArcRenderer extends FeatureRendererType {
       ...results,
       ...res,
       features,
-      layout,
       height,
       width,
-      maxHeightReached: layout.maxHeightReached,
     }
   }
 }
