@@ -1,5 +1,5 @@
-import Plugin from '@gmod/jbrowse-core/Plugin'
-import PluginManager from '@gmod/jbrowse-core/PluginManager'
+import Plugin from '@jbrowse/core/Plugin'
+import PluginManager from '@jbrowse/core/PluginManager'
 
 import ArcRenderer, {
   configSchema as ArcRendererConfigSchema,
@@ -7,7 +7,7 @@ import ArcRenderer, {
 } from './ArcRenderer'
 
 export default class ArcRendererPlugin extends Plugin {
-  name = 'ArcPlugin'
+  name = 'ArcRenderer'
   install(pluginManager: PluginManager) {
     pluginManager.addRendererType(
       () =>
@@ -16,6 +16,7 @@ export default class ArcRendererPlugin extends Plugin {
           name: 'ArcRenderer',
           ReactComponent: ArcRendererReactComponent,
           configSchema: ArcRendererConfigSchema,
+          pluginManager,
         }),
     )
   }

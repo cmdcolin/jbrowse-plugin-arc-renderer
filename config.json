@@ -5,11 +5,11 @@
   "plugins": [
     {
       "name": "UCSC",
-      "url": "http://localhost:9001/plugin.js"
+      "url": "http://localhost:9001/dist/jbrowse-plugin-ucsc.umd.development.js"
     },
     {
       "name": "ArcRenderer",
-      "url": "http://localhost:9000/plugin.js"
+      "url": "http://localhost:9000/dist/jbrowse-plugin-arc-renderer.umd.development.js"
     }
   ],
   "assemblies": [
@@ -39,7 +39,7 @@
         "adapter": {
           "type": "RefNameAliasAdapter",
           "location": {
-            "uri": "test_data/GRCh38_RefSeq2UCSC.txt"
+            "uri": "https://jbrowse.org/genomes/GRCh38/hg38_aliases.txt"
           }
         }
       }
@@ -52,22 +52,37 @@
       "name": "UCSC GeneHancer",
       "assemblyNames": ["hg38"],
       "adapter": {
-        "type": "UCSCAdapter",
-        "track": "geneHancerInteractionsDoubleElite"
+        "type": "BedTabixAdapter",
+        "bedGzLocation": {
+          "uri": "https://jbrowse.org/genomes/hg19/dbSUPER/adipose_interactions.sorted.bed.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://jbrowse.org/genomes/hg19/dbSUPER/adipose_interactions.sorted.bed.gz.tbi"
+          }
+        }
       },
-      "renderer": {
-        "type": "ArcRenderer"
-      }
+      "displays": [
+        {
+          "displayId": "test",
+          "type": "LinearBasicDisplay",
+          "renderer": {
+            "type": "ArcRenderer"
+          }
+        }
+      ]
     },
     {
-      "type": "BasicTrack",
+      "type": "FeatureTrack",
       "trackId": "gencode_nclist_hg38",
       "name": "Gencode v32",
       "assemblyNames": ["hg38"],
       "category": ["Annotation"],
       "adapter": {
         "type": "NCListAdapter",
-        "rootUrlTemplate": "https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/gencode/{refseq}/trackData.jsonz",
+        "rootUrlTemplate": {
+          "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/gencode/{refseq}/trackData.jsonz"
+        },
         "refNames": [
           "chr1",
           "chr2",
@@ -96,12 +111,6 @@
           "chrY",
           "chrMT"
         ]
-      },
-      "renderer": {
-        "type": "SvgFeatureRenderer",
-        "labels": {
-          "description": "function(feature) { return feature.get('gene_name') }"
-        }
       }
     }
   ],

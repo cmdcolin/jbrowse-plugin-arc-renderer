@@ -1,17 +1,16 @@
 import React from 'react'
-import ServerSideRendererType from '@gmod/jbrowse-core/pluggableElementTypes/renderers/ServerSideRendererType'
+import FeatureRendererType from '@jbrowse/core/pluggableElementTypes/renderers/FeatureRendererType'
 import {
   ConfigurationSchema,
   readConfObject,
-} from '@gmod/jbrowse-core/configuration'
+} from '@jbrowse/core/configuration'
 
-import { PrerenderedCanvas } from '@gmod/jbrowse-core/ui'
-import { bpSpanPx } from '@gmod/jbrowse-core/util'
-import {
-  createCanvas,
-  createImageBitmap,
-} from '@gmod/jbrowse-core/util/offscreenCanvasPonyfill'
+import { PrerenderedCanvas } from '@jbrowse/core/ui'
+import { bpSpanPx } from '@jbrowse/core/util'
+import { createCanvas, createImageBitmap } from '@jbrowse/core/util'
+import { renderToAbstractCanvas } from '@jbrowse/core/util/offscreenCanvasUtils'
 
+console.log({ createCanvas, createImageBitmap })
 // Our config schema for arc track will be basic, include just a color
 export const configSchema = ConfigurationSchema(
   'ArcRenderer',
@@ -37,24 +36,8 @@ export const ReactComponent = props => {
 
 // Our ArcRenderer class does the main work in it's render method
 // which draws to a canvas and returns the results in a React component
-export default class ArcRenderer extends ServerSideRendererType {
-  async render(renderProps) {
-    const {
-      features,
-      config,
-      regions,
-      bpPerPx,
-      highResolutionScaling,
-    } = renderProps
-    const region = regions[0]
-    const width = (region.end - region.start) / bpPerPx
-    const height = 500
-    const canvas = createCanvas(
-      width * highResolutionScaling,
-      height * highResolutionScaling,
-    )
-    const ctx = canvas.getContext('2d')
-    ctx.scale(highResolutionScaling, highResolutionScaling)
+export default class ArcRenderer extends FeatureRendererType {
+  makeImageData() {
     for (const feature of features.values()) {
       const [left, right] = bpSpanPx(
         feature.get('start'),
@@ -70,17 +53,39 @@ export default class ArcRenderer extends ServerSideRendererType {
       ctx.bezierCurveTo(left, 200, right, 200, right, 0)
       ctx.stroke()
     }
-    const imageData = await createImageBitmap(canvas)
-    const element = React.createElement(
-      this.ReactComponent,
-      {
+  }
+  async render(renderProps) {
+    const { regions, bpPerPx } = renderProps
+    const features = await this.getFeatures(renderProps)
+    const region = regions[0]
+    const width = (region.end - region.start) / bpPerPx
+    const height = 500
+    const res = await renderToAbstractCanvas(width, height, renderProps, ctx =>
+      this.makeImageData(ctx, layoutRecords, {
         ...renderProps,
-        width,
-        height,
-        imageData,
-      },
-      null,
+        layout,
+        features,
+        regionSequence,
+      }),
     )
-    return { element, imageData, width, height }
+
+    const results = await super.render({
+      ...renderProps,
+      ...res,
+      features,
+      layout,
+      height,
+      width,
+    })
+
+    return {
+      ...results,
+      ...res,
+      features,
+      layout,
+      height,
+      width,
+      maxHeightReached: layout.maxHeightReached,
+    }
   }
 }
