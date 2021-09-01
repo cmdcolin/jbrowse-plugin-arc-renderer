@@ -1,18 +1,12 @@
 import React from 'react'
-import ServerSideRendererType from '@jbrowse/core/pluggableElementTypes/renderers/ServerSideRendererType'
+import FeatureRendererType from '@jbrowse/core/pluggableElementTypes/renderers/FeatureRendererType'
 import {
   ConfigurationSchema,
   readConfObject,
 } from '@jbrowse/core/configuration'
-
+import { renderToAbstractCanvas } from '@jbrowse/core/util'
 import { PrerenderedCanvas } from '@jbrowse/core/ui'
 import { bpSpanPx } from '@jbrowse/core/util'
-import {
-  createCanvas,
-  createImageBitmap,
-} from '@jbrowse/core/util/offscreenCanvasPonyfill'
-
-console.log({ ConfigurationSchema })
 
 // Our config schema for arc track will be basic, include just a color
 export const configSchema = ConfigurationSchema(
@@ -37,26 +31,12 @@ export const ReactComponent = props => {
   )
 }
 
-// Our ArcRenderer class does the main work in it's render method
-// which draws to a canvas and returns the results in a React component
-export default class ArcRenderer extends ServerSideRendererType {
-  async render(renderProps) {
-    const {
-      features,
-      config,
-      regions,
-      bpPerPx,
-      highResolutionScaling,
-    } = renderProps
-    const region = regions[0]
-    const width = (region.end - region.start) / bpPerPx
-    const height = 500
-    const canvas = createCanvas(
-      width * highResolutionScaling,
-      height * highResolutionScaling,
-    )
-    const ctx = canvas.getContext('2d')
-    ctx.scale(highResolutionScaling, highResolutionScaling)
+export default class ArcRenderer extends FeatureRendererType {
+  supportsSVG = true
+
+  makeImageData(ctx, props) {
+    const { features, config, regions, bpPerPx } = props
+    const [region] = regions
     for (const feature of features.values()) {
       const [left, right] = bpSpanPx(
         feature.get('start'),
@@ -72,17 +52,35 @@ export default class ArcRenderer extends ServerSideRendererType {
       ctx.bezierCurveTo(left, 200, right, 200, right, 0)
       ctx.stroke()
     }
-    const imageData = await createImageBitmap(canvas)
-    const element = React.createElement(
-      this.ReactComponent,
-      {
+  }
+  async render(renderProps) {
+    const { regions, bpPerPx } = renderProps
+    const region = regions[0]
+    const width = (region.end - region.start) / bpPerPx
+    const height = 500
+    const features = await this.getFeatures(renderProps)
+
+    const res = await renderToAbstractCanvas(width, height, renderProps, ctx =>
+      this.makeImageData(ctx, {
         ...renderProps,
-        width,
-        height,
-        imageData,
-      },
-      null,
+        features,
+      }),
     )
-    return { element, imageData, width, height }
+
+    const results = await super.render({
+      ...renderProps,
+      ...res,
+      features,
+      height,
+      width,
+    })
+
+    return {
+      ...results,
+      ...res,
+      features,
+      height,
+      width,
+    }
   }
 }

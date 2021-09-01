@@ -18,6 +18,7 @@ export default class MyProjectPlugin extends Plugin {
           name: 'ArcRenderer',
           ReactComponent: ArcRendererReactComponent,
           configSchema: ArcRendererConfigSchema,
+          pluginManager,
         }),
     )
   }
