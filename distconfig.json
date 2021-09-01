@@ -2,7 +2,7 @@
   "plugins": [
     {
       "name": "ArcRenderer",
-      "url": "http://localhost:9000/dist/jbrowse-plugin-arc-renderer.umd.development.js"
+      "url": "https://unpkg.com/jbrowse-plugin-arc-renderer/dist/jbrowse-plugin-arc-renderer.umd.production.min.js"
     }
   ],
   "assemblies": [
