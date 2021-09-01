@@ -17,7 +17,3 @@ This is a demonstration of JBrowse 2 plugin
 ## Demo
 
 http://localhost:3000/?config=http://localhost:9000/config.json
-
-## Note
-
-Might need https://github.com/GMOD/jbrowse-components/pull/2231
