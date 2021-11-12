@@ -102,6 +102,7 @@ function ArcRendering(props: any) {
       width={width}
       height={height}
       style={{
+        outline: 'none',
         position: 'relative',
       }}
     >
