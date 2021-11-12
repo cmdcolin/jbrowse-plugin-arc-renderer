@@ -1,6 +1,6 @@
 import React from 'react'
 import { readConfObject } from '@jbrowse/core/configuration'
-import { bpSpanPx, getSession } from '@jbrowse/core/util'
+import { bpSpanPx } from '@jbrowse/core/util'
 import { observer } from 'mobx-react'
 import { Tooltip } from 'react-svg-tooltip'
 
@@ -11,6 +11,14 @@ function ArcRendering(props: any) {
       return undefined
     }
     return handler(event)
+  }
+
+  const onClick = (event: any, id: any) => {
+    const { onFeatureClick: handler } = props
+    if (!handler) {
+      return undefined
+    }
+    return handler(event, id)
   }
 
   const { features, config, regions, blockKey, bpPerPx } = props
@@ -25,7 +33,8 @@ function ArcRendering(props: any) {
       bpPerPx,
     )
 
-    const id = blockKey + '-' + feature.uniqueId
+    const featureId = feature.id()
+    const id = blockKey + '-' + featureId
     const stroke = readConfObject(config, 'color', { feature })
     const label = readConfObject(config, 'label', { feature })
     const caption = readConfObject(config, 'caption', { feature })
@@ -42,6 +51,7 @@ function ArcRendering(props: any) {
           stroke={stroke}
           strokeWidth={strokeWidth}
           fill="transparent"
+          onClick={e => onClick(e, featureId)}
           ref={ref}
         />
         <Tooltip triggerRef={ref}>
