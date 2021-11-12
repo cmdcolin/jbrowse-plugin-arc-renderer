@@ -1,7 +1,6 @@
 import Plugin from '@jbrowse/core/Plugin'
 import PluginManager from '@jbrowse/core/PluginManager'
 import { version } from '../package.json'
-
 import ArcRenderer, {
   configSchema as ArcRendererConfigSchema,
   ReactComponent as ArcRendererReactComponent,
