@@ -13,8 +13,7 @@ function ArcRendering(props: any) {
     return handler(event)
   }
 
-  const { features, config, regions, bpPerPx } = props
-  console.log(props)
+  const { features, config, regions, blockKey, bpPerPx } = props
   const [region] = regions
   const arcsRendered = []
 
@@ -26,7 +25,7 @@ function ArcRendering(props: any) {
       bpPerPx,
     )
 
-    const id = feature.uniqueId
+    const id = blockKey + '-' + feature.uniqueId
     const stroke = readConfObject(config, 'color', { feature })
     const label = readConfObject(config, 'label', { feature })
     const caption = readConfObject(config, 'caption', { feature })
