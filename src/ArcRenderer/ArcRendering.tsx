@@ -1,20 +1,19 @@
 import React from 'react'
 import { readConfObject } from '@jbrowse/core/configuration'
-import { bpSpanPx, getSession } from '@jbrowse/core/util'
+import { bpSpanPx } from '@jbrowse/core/util'
 import { observer } from 'mobx-react'
 import { Tooltip } from 'react-svg-tooltip'
 
 function ArcRendering(props: any) {
-  const onMouseDown = (event: any, id: any) => {
-    const { onMouseDown: handler } = props
+  const onClick = (event: any, id: any) => {
+    const { onFeatureClick: handler } = props
     if (!handler) {
       return undefined
     }
-    return handler(event)
+    return handler(event, id)
   }
 
-  const { features, config, regions, bpPerPx } = props
-  console.log(props)
+  const { features, config, regions, blockKey, bpPerPx } = props
   const [region] = regions
   const arcsRendered = []
 
@@ -26,7 +25,8 @@ function ArcRendering(props: any) {
       bpPerPx,
     )
 
-    const id = feature.uniqueId
+    const featureId = feature.id()
+    const id = blockKey + '-' + featureId
     const stroke = readConfObject(config, 'color', { feature })
     const label = readConfObject(config, 'label', { feature })
     const caption = readConfObject(config, 'caption', { feature })
@@ -36,7 +36,7 @@ function ArcRendering(props: any) {
     const tooltipWidth = 20 + caption.toString().length * 6
 
     arcsRendered.push(
-      <g key={id} onMouseDown={e => onMouseDown(e, id)}>
+      <g key={id} onClick={e => onClick(e, featureId)}>
         <path
           id={id}
           d={`M ${left} 0 C ${left} 100, ${right} 100, ${right} 0`}
@@ -94,6 +94,7 @@ function ArcRendering(props: any) {
       height={height}
       style={{
         position: 'relative',
+        outline: 'none',
       }}
     >
       {arcsRendered}
