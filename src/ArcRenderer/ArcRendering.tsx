@@ -42,6 +42,7 @@ function ArcRendering(props: any) {
           stroke={stroke}
           strokeWidth={strokeWidth}
           fill="transparent"
+          onClick={e => onClick(e, featureId)}
           ref={ref}
         />
         <Tooltip triggerRef={ref}>
@@ -92,8 +93,8 @@ function ArcRendering(props: any) {
       width={width}
       height={height}
       style={{
-        position: 'relative',
         outline: 'none',
+        position: 'relative',
       }}
     >
       {arcsRendered}
