@@ -1,6 +1,6 @@
 import React from 'react'
 import { readConfObject } from '@jbrowse/core/configuration'
-import { bpSpanPx } from '@jbrowse/core/util'
+import { bpSpanPx, measureText } from '@jbrowse/core/util'
 import { observer } from 'mobx-react'
 import { Tooltip } from 'react-svg-tooltip'
 
@@ -33,7 +33,7 @@ function ArcRendering(props: any) {
     const strokeWidth = readConfObject(config, 'thickness', { feature })
     const startOffset = 50 - (label.toString().length * 2 - 1)
     const ref = React.createRef<SVGPathElement>()
-    const tooltipWidth = 20 + caption.toString().length * 6
+    const tooltipWidth = 20 + measureText(caption.toString())
 
     arcsRendered.push(
       <g key={id} onClick={e => onClick(e, featureId)}>
@@ -66,19 +66,19 @@ function ArcRendering(props: any) {
             {caption}
           </text>
         </Tooltip>
-        <text>
-          <textPath
-            href={`#${id}`}
-            startOffset={`${startOffset}%`}
-            style={{ stroke: 'white', strokeWidth: '0.6em' }}
-          >
-            {label}
-          </textPath>
+        <text
+          x={left + (right - left) / 2}
+          y="78px"
+          style={{ stroke: 'white', strokeWidth: '0.8em' }}
+        >
+          {label}
         </text>
-        <text>
-          <textPath href={`#${id}`} startOffset={`${startOffset}%`}>
-            {label}
-          </textPath>
+        <text
+          x={left + (right - left) / 2}
+          y="78px"
+          style={{ stroke: 'black' }}
+        >
+          {label}
         </text>
       </g>,
     )
