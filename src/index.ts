@@ -45,5 +45,12 @@ export default class MyProjectPlugin extends Plugin {
         ReactComponent: BaseLinearDisplayComponent,
       })
     })
+
+    pluginManager.jexl.addFunction(
+      'logThickness',
+      (feature: any, attributeName: string) => {
+        return Math.log(feature.get(attributeName) + 1)
+      },
+    )
   }
 }

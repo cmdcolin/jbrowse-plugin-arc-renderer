@@ -31,7 +31,6 @@ function ArcRendering(props: any) {
     const label = readConfObject(config, 'label', { feature })
     const caption = readConfObject(config, 'caption', { feature })
     const strokeWidth = readConfObject(config, 'thickness', { feature })
-    const startOffset = 50 - (label.toString().length * 2 - 1)
     const ref = React.createRef<SVGPathElement>()
     const tooltipWidth = 20 + measureText(caption.toString())
 
@@ -69,7 +68,7 @@ function ArcRendering(props: any) {
         <text
           x={left + (right - left) / 2}
           y="78px"
-          style={{ stroke: 'white', strokeWidth: '0.8em' }}
+          style={{ stroke: 'white', strokeWidth: '0.6em' }}
         >
           {label}
         </text>

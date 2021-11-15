@@ -11,7 +11,7 @@ export default ConfigurationSchema(
     thickness: {
       type: 'number',
       description: 'the thickness of the arcs',
-      defaultValue: 4,
+      defaultValue: `jexl:logThickness(feature,'score')`,
     },
     label: {
       type: 'string',
